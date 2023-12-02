@@ -1,5 +1,6 @@
 ﻿using PoESplitTool;
 using System.ComponentModel;
+using System.Text.Json.Serialization;
 
 public class ZoneTime : ObservableObject
 {
@@ -8,7 +9,9 @@ public class ZoneTime : ObservableObject
     private DateTime? startTime;
     private DateTime? endTime;
 
-    public string ZoneName { get; set; }
+    public Zone Zone { get; set; }
+    [JsonIgnore]
+    public string ZoneName => Zone.Name;
     public string Notes { get; set; }
 
     public string BuildNotes { get; set; }
@@ -36,13 +39,13 @@ public class ZoneTime : ObservableObject
             OnPropertyChanged(nameof(SegmentTime));
         }
     }
-
-    public ZoneTime(string zoneName, DateTime startTime, string notes, TimeSpan? splitTime)
+    
+    public ZoneTime(Zone zone, DateTime startTime, TimeSpan? splitTime)
     {
-        ZoneName = zoneName;
+        Zone = zone;
         StartTime = startTime;
-        Notes = notes;
-        var buildZoneNotes = Builds.LADeadeye.ZoneBuildNotes.Where(x => x.ZoneName == zoneName).FirstOrDefault();
+        Notes = zone.Notes;
+        var buildZoneNotes = Builds.LADeadeye.ZoneBuildNotes.Where(x => x.ZoneName == zone.Name).FirstOrDefault();
         BuildNotes = buildZoneNotes != null ? buildZoneNotes.Notes : "";
         SplitTime = splitTime;
     }

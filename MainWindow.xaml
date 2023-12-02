@@ -2,7 +2,8 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:PoESplitTimer"
-        Title="PoE Split Timer" Height="450" Width="800">
+        Title="PoE Split Timer" Height="450" Width="800" 
+        KeyDown="Window_KeyDown">  
     <Window.Resources>
         <local:ShowWhenStoppedAndNotZeroConverter x:Key="ShowWhenStoppedAndNotZero"/>
         <local:ShowWhenStoppedAndZeroConverter x:Key="ShowWhenStoppedAndZero"/>
@@ -16,14 +17,14 @@
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Zone" DisplayMemberBinding="{Binding ZoneName}" Width="120"/>
-                    <GridViewColumn Header="Segment Time" Width="120">
+                    <GridViewColumn Header="Seg Time" Width="60">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding SegmentTime, StringFormat='{}{0:hh\\:mm\\:ss}'}"/>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="Split Time" Width="120">
+                    <GridViewColumn Header="Split Time" Width="60">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding SplitTime, StringFormat='{}{0:hh\\:mm\\:ss}'}"/>

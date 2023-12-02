@@ -4,6 +4,7 @@
     {
         // Example: new Zone("Zone Name", Act Number, IsCity, HasWaypoint, IsBossArea)
         new Zone("The Twilight Strand", 1, false, false, true, "kill hillock"),
+        new Zone("Lioneye's Watch", 1, true, true, false),
         new Zone("The Coast", 1, false, true, false),
         new Zone("The Tidal Island", 1, false, false, true),
         new Zone("The Mud Flats", 1, false, false, false),
@@ -100,6 +101,7 @@
     public static readonly List<Zone> Act6Zones = new List<Zone>
     {
         new Zone("The Twilight Strand", 6, false, false, true),
+        new Zone("Lioneye's Watch", 6, true, true, false),
         new Zone("The Coast", 6, false, true, false),
         new Zone("The Mud Flats", 6, false, false, false),
         new Zone("The Karui Fortress", 6, false, false, false),
@@ -118,6 +120,7 @@
 
     public static readonly List<Zone> Act7Zones = new List<Zone>
     {
+        new Zone("The Bridge Encampment", 7, true, true, false),
         new Zone("The Broken Bridge", 7, false, true, false),
         new Zone("The Crossroads", 7, false, true, false),
         new Zone("The Fellshrine Ruins", 7, false, false, false),
@@ -137,6 +140,7 @@
     public static readonly List<Zone> Act8Zones = new List<Zone>
     {
         new Zone("The Sarn Ramparts", 8, false, true, false),
+        new Zone("The Sarn Encampment", 8, true, true, false),
         new Zone("The Toxic Conduits", 8, false, true, false),
         new Zone("Doedre's Cesspool", 8, false, false, false),
         new Zone("The Grand Promenade", 8, false, true, false),
@@ -152,6 +156,7 @@
     public static readonly List<Zone> Act9Zones = new List<Zone>
     {
         new Zone("The Blood Aqueduct", 9, false, true, false),
+        new Zone("Highgate", 9, true, true, false),
         new Zone("The Descent", 9, false, false, false),
         new Zone("The Vastiri Desert", 9, false, true, false),
         new Zone("The Oasis", 9, false, false, false),
@@ -166,6 +171,7 @@
 
     public static readonly List<Zone> Act10Zones = new List<Zone>
     {
+        new Zone("Oriath Docks", 10, true, true, false),
         new Zone("The Cathedral Rooftop", 10, false, false, true),
         new Zone("The Ravaged Square", 10, false, true, false),
         new Zone("The Ossuary", 10, false, false, false),
@@ -173,6 +179,12 @@
         new Zone("The Reliquary", 10, false, false, false),
         new Zone("The Canals", 10, false, true, false),
         new Zone("The Feeding Trough", 10, false, false, false)
+    };
+
+    public static readonly List<Zone> EpilogueZones = new List<Zone>
+    {
+        new Zone("Karui Shores", 11, true, true, false)
+
     };
 
 
