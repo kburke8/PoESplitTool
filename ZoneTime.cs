@@ -8,7 +8,12 @@ public class ZoneTime : ObservableObject
     private TimeSpan elapsed;
     private DateTime? startTime;
     private DateTime? endTime;
-
+    private TimeSpan personalBest;
+    public TimeSpan PersonalBest
+    {
+        get => personalBest;
+        set => SetProperty(ref personalBest, value);
+    }
     public Zone Zone { get; set; }
     [JsonIgnore]
     public string ZoneName => Zone.Name;
@@ -40,7 +45,7 @@ public class ZoneTime : ObservableObject
         }
     }
     
-    public ZoneTime(Zone zone, DateTime startTime, TimeSpan? splitTime)
+    public ZoneTime(Zone zone, DateTime startTime, TimeSpan? splitTime, TimeSpan? personalBest = null)
     {
         Zone = zone;
         StartTime = startTime;
@@ -48,5 +53,6 @@ public class ZoneTime : ObservableObject
         var buildZoneNotes = Builds.LADeadeye.ZoneBuildNotes.Where(x => x.ZoneName == zone.Name).FirstOrDefault();
         BuildNotes = buildZoneNotes != null ? buildZoneNotes.Notes : "";
         SplitTime = splitTime;
+        PersonalBest = personalBest ?? TimeSpan.Zero;
     }
 }

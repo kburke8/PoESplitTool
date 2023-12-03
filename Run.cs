@@ -17,7 +17,7 @@ namespace PoESplitTimer
             get => zoneTimes;
             set => SetProperty(ref zoneTimes, value);
         }
-        public Dictionary<string, ZoneTime> HistoricalZoneTimes { get; set; } = new Dictionary<string, ZoneTime>();
+        public Dictionary<string, List<ZoneTime>> HistoricalZoneTimes { get; set; } = new Dictionary<string, List<ZoneTime>>();
 
         [JsonIgnore]
         private bool isRunning;
@@ -39,7 +39,9 @@ namespace PoESplitTimer
         public Zone? CurrentZone { get; set; } = null;
 
         [JsonIgnore]
-        public TimeSpan CityTime => ZoneTimes.Where(x => x.Zone.IsCity).Aggregate(TimeSpan.Zero, (x, y) => x + y.SegmentTime ?? TimeSpan.Zero);
+        public TimeSpan CityTime => ZoneTimes.Where(x => x.Zone.IsCity).Aggregate(TimeSpan.Zero, (x, y) => x + y.SegmentTime ?? TimeSpan.Zero)
+            + (ExtraCityTime.Count > 0 ? ExtraCityTime.Select(x => (x.EndTime ?? DateTime.Now) - x.StartTime)?.Aggregate((x, y) => x + y) ?? TimeSpan.Zero : TimeSpan.Zero);
+        public List<(DateTime StartTime, DateTime? EndTime)> ExtraCityTime { get; set; } = new List<(DateTime StartTime, DateTime? EndTime)>();
 
         public Run() { 
         }
@@ -64,7 +66,8 @@ namespace PoESplitTimer
         {
             ZoneTimes.Clear();
             CurrentZone = ZoneData.Zones.FirstOrDefault(z => z.Name == "The Twilight Strand" && z.Act == 1);
-            ZoneTimes.Add(new ZoneTime(CurrentZone, DateTime.Now, TimeSpan.Zero));
+            TimeSpan? personalBest = HistoricalZoneTimes.ContainsKey(CurrentZone.Name) ? HistoricalZoneTimes[CurrentZone.Name].Min(z=>z.Elapsed) : null;
+            ZoneTimes.Add(new ZoneTime(CurrentZone, DateTime.Now, TimeSpan.Zero, personalBest));
             IsRunning = true;
             timerManager.StartTimer();
         }
@@ -99,7 +102,8 @@ namespace PoESplitTimer
             {
                 return;
             }
-            ZoneTimes.Add(new ZoneTime(zone, DateTime.Now, timerManager.Elapsed));
+            TimeSpan? personalBest = HistoricalZoneTimes.ContainsKey(zone.Name) ? HistoricalZoneTimes[zone.Name].Min(z => z.Elapsed) : null;
+            ZoneTimes.Add(new ZoneTime(zone, DateTime.Now, timerManager.Elapsed, personalBest));
             var currentZoneTime = ZoneTimes.Last(x=>x.ZoneName == CurrentZone.Name);
             currentZoneTime.EndTime = DateTime.Now;
             CurrentZone = ZoneData.Zones.FirstOrDefault(z => z.Name == zoneName);
@@ -107,6 +111,16 @@ namespace PoESplitTimer
             {
                 CurrentAct = CurrentZone.Act;
             }
+        }
+
+        public void AddExtraCityTime(Zone zone)
+        {
+            ExtraCityTime.Add((DateTime.Now, null));
+        }
+
+        public void EndExtraCityTime(Zone zone)
+        {
+            ExtraCityTime[ExtraCityTime.Count - 1] = (ExtraCityTime[ExtraCityTime.Count - 1].StartTime, DateTime.Now);
         }
     }
 }

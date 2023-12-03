@@ -31,6 +31,13 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
+                    <GridViewColumn Header="PB Time" Width="60">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding PersonalBest, StringFormat='{}{0:hh\\:mm\\:ss}'}"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
                     <GridViewColumn Header="Notes" DisplayMemberBinding="{Binding Notes}" Width="120"/>
                     <GridViewColumn Header="Build Notes" DisplayMemberBinding="{Binding BuildNotes}" Width="120"/>
 
@@ -39,7 +46,8 @@
         </ListView>
 
         <!-- Timer Display -->
-        <TextBlock x:Name="txtTimer" HorizontalAlignment="Center" VerticalAlignment="Bottom" FontSize="24" Margin="10"/>
+        <TextBlock x:Name="txtTimer" HorizontalAlignment="Center" VerticalAlignment="Bottom" FontSize="24" Margin="20"/>
+        <TextBlock x:Name="cityTimer" HorizontalAlignment="Center" VerticalAlignment="Bottom" FontSize="12" Margin="10"/>
 
         <!-- Run Control Buttons -->
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="10">

@@ -22,74 +22,39 @@ namespace PoESplitTimer
             set
             {
                 currentBuild = value;
-                foreach (var run in currentBuild.Act1Runs)
+                var runs = new List<List<Run>>()
                 {
-                    foreach (var zoneTime in run.ZoneTimes)
-                    {
-                        currentRun.HistoricalZoneTimes.Add(zoneTime.ZoneName, zoneTime);
-                    }
+                    currentBuild.Act1Runs,
+                    currentBuild.Act2Runs,
+                    currentBuild.Act3Runs,
+                    currentBuild.Act4Runs,
+                    currentBuild.Act5Runs,
+                    currentBuild.Act6Runs,
+                    currentBuild.Act7Runs,
+                    currentBuild.Act8Runs,
+                    currentBuild.Act9Runs,
+                    currentBuild.Act10Runs
+                };
+                foreach (var run in runs)
+                {
+                    FillHistoricalData(run);
                 }
-                foreach (var run in currentBuild.Act2Runs)
+
+                void FillHistoricalData(List<Run> actRuns)
                 {
-                    foreach (var zoneTime in run.ZoneTimes)
+                    foreach (var run in actRuns)
                     {
-                        currentRun.HistoricalZoneTimes.Add(zoneTime.ZoneName, zoneTime);
-                    }
-                }
-                foreach (var run in currentBuild.Act3Runs)
-                {
-                    foreach (var zoneTime in run.ZoneTimes)
-                    {
-                        currentRun.HistoricalZoneTimes.Add(zoneTime.ZoneName, zoneTime);
-                    }
-                }
-                foreach (var run in currentBuild.Act4Runs)
-                {
-                    foreach (var zoneTime in run.ZoneTimes)
-                    {
-                        currentRun.HistoricalZoneTimes.Add(zoneTime.ZoneName, zoneTime);
-                    }
-                }
-                foreach (var run in currentBuild.Act5Runs)
-                {
-                    foreach (var zoneTime in run.ZoneTimes)
-                    {
-                        currentRun.HistoricalZoneTimes.Add(zoneTime.ZoneName, zoneTime);
-                    }
-                }
-                foreach (var run in currentBuild.Act6Runs)
-                {
-                    foreach (var zoneTime in run.ZoneTimes)
-                    {
-                        currentRun.HistoricalZoneTimes.Add(zoneTime.ZoneName, zoneTime);
-                    }
-                }
-                foreach (var run in currentBuild.Act7Runs)
-                {
-                    foreach (var zoneTime in run.ZoneTimes)
-                    {
-                        currentRun.HistoricalZoneTimes.Add(zoneTime.ZoneName, zoneTime);
-                    }
-                }
-                foreach (var run in currentBuild.Act8Runs)
-                {
-                    foreach (var zoneTime in run.ZoneTimes)
-                    {
-                        currentRun.HistoricalZoneTimes.Add(zoneTime.ZoneName, zoneTime);
-                    }
-                }
-                foreach (var run in currentBuild.Act9Runs)
-                {
-                    foreach (var zoneTime in run.ZoneTimes)
-                    {
-                        currentRun.HistoricalZoneTimes.Add(zoneTime.ZoneName, zoneTime); 
-                    }
-                }
-                foreach (var run in currentBuild.Act10Runs)
-                {
-                    foreach (var zoneTime in run.ZoneTimes)
-                    {
-                        currentRun.HistoricalZoneTimes.Add(zoneTime.ZoneName, zoneTime); 
+                        foreach (var zoneTime in run.ZoneTimes)
+                        {
+                            if (!currentRun.HistoricalZoneTimes.ContainsKey(zoneTime.ZoneName))
+                            {
+                                currentRun.HistoricalZoneTimes.Add(zoneTime.ZoneName, new List<ZoneTime>() { zoneTime });
+                            }
+                            else
+                            {
+                                currentRun.HistoricalZoneTimes[zoneTime.ZoneName].Add(zoneTime);
+                            }
+                        }
                     }
                 }
             }
@@ -113,12 +78,14 @@ namespace PoESplitTimer
             logParser.StartMonitoring();
 
             timerManager.TimerTicked += UpdateTimerDisplay;
+            timerManager.TimerTicked += UpdateCityTimerDisplay;
         }
 
         // Event handlers for UI elements (e.g., buttons for starting/stopping runs, file operations, etc.)
         private void InitializeTimerDisplay()
         {
-            txtTimer.Text = "0:00:00"; // Setting the initial display to 0:00:00
+            txtTimer.Text = "Timer: 0:00:00"; // Setting the initial display to 0:00:00
+            cityTimer.Text = "City Time: 0:00:00";
         }
 
         private void LogParser_OnZoneChanged(string zoneName)
@@ -128,6 +95,20 @@ namespace PoESplitTimer
                 if (ShouldAddZoneTime(zoneName))
                 {
                     currentRun.AddZone(zoneName);
+                }
+                else
+                {
+                    var zone = ZoneData.Zones.FirstOrDefault(z => z.Name == zoneName);
+                    if (zone != null && zone.IsCity && !currentRun.CurrentZone.IsCity)
+                    {
+                        currentRun.CurrentZone = zone;
+                        currentRun.AddExtraCityTime(zone);
+                    }
+                    else if (zone != null && !zone.IsCity && currentRun.CurrentZone.IsCity && currentRun.ExtraCityTime.Any(x=>x.EndTime == null))
+                    {
+                        
+                        currentRun.EndExtraCityTime(zone);
+                    }
                 }
                 if (zoneName == ZoneData.Act2Zones[0].Name)
                 {
@@ -169,7 +150,6 @@ namespace PoESplitTimer
                 {
                     CurrentBuild.AddRun(currentRun, CurrentBuild.Act10Runs);
                 }
-
                 bool ShouldAddZoneTime(string zoneName)
                 {
                     var zone = ZoneData.Zones.FirstOrDefault(z => z.Name == zoneName
@@ -185,7 +165,15 @@ namespace PoESplitTimer
         private void UpdateTimerDisplay(TimeSpan elapsed)
         {
             //Update the timer display, HH:MM:SS:SS
-            txtTimer.Text = $"{elapsed.Hours}:{elapsed.Minutes}:{elapsed.Seconds}:{elapsed.Milliseconds / 10}";
+            txtTimer.Text = $"Timer: {elapsed.Hours}:{elapsed.Minutes}:{elapsed.Seconds}:{elapsed.Milliseconds / 10}";
+
+        }
+
+        private void UpdateCityTimerDisplay(TimeSpan elapsed)
+        {
+            var cityTime = currentRun.CityTime;
+            //Update the timer display, HH:MM:SS:SS
+            cityTimer.Text = $"City Timer: {cityTime.Hours}:{cityTime.Minutes}:{cityTime.Seconds}:{cityTime.Milliseconds / 10}";
 
         }
         private void btnStartRun_Click(object sender, RoutedEventArgs e)

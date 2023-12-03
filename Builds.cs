@@ -19,8 +19,33 @@ namespace PoESplitTool
                 new ZoneBuildNote
                 {
                     ZoneName = "The Twilight Strand",
-                    Notes = "Make sure you pick up momentum"
-                }
+                    Notes = "copy regex"
+                },
+                new ZoneBuildNote
+                {
+                    ZoneName = "Lioneye's Watch",
+                    Notes = "Take Galvanic Arrow. Buy MS Boots/Serrated Quiv/3-G"
+                },
+                new ZoneBuildNote
+                {
+                    ZoneName = "The Tidal Island",
+                    Notes = "Take Sniper's Mark, Dash, Mirage Archer. Buy War Banner."
+                },
+                new ZoneBuildNote
+                {
+                    ZoneName = "The Lower Prison",
+                    Notes = "Buy Frostblink?"
+                },
+                new ZoneBuildNote
+                {
+                    ZoneName = "The Upper Prison",
+                    Notes = "Take Blink Arrow, Manaforged Arrow. Add Cold Damage."
+                },
+                new ZoneBuildNote
+                {
+                    ZoneName = "The Cavern of Wrath",
+                    Notes = "Take Lightning Arrow. Buy LMP, Sapphire Ring."
+                },
             }
         };
         public static List<Build> BuildsList = new List<Build>() { LADeadeye };
